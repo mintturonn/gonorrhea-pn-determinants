@@ -1,6 +1,10 @@
 
 library(here)
+library(igraph)
+library(dplyr)
 library(statnet)
+library(EpiModel)
+library(ergm.ego)
 
 # helper function
 nw_description <- function(parts_temp){
@@ -64,7 +68,6 @@ nw <- network::set.vertex.attribute(nw, "risk", df_sufflepop$risk)
 ############################################################################################################################
 ############################################################################################################################
 
-
 # ergm model -- low degree
 # risk categories are not used
 regnw <- ergm(nw ~ edges, target.stats = c(450))
@@ -86,11 +89,8 @@ for (i in 1:10){
   
   parts_temp[[i]] <- contacts.rx + contacts.cx
   parts_temp[[i]][parts_temp[[i]]==3] <- 1
-  # sum(parts_temp==3)
+ 
 }
-
-
-# gplot(parts_temp[[1]])
 
 ld_res <- nw_description(parts_temp)
 
@@ -112,8 +112,6 @@ casnw <- ergm(nw ~ edges+ nodefactor("risk"), target.stats = c(3320,	1627,	588,	
 rx <- simulate(regnw, nsim = 10)
 cx <- simulate(casnw, nsim = 10)
 
-# summary(rx)
-
 parts_temp <- vector("list", 10)
 
 for (i in 1:10){
@@ -128,9 +126,6 @@ for (i in 1:10){
     parts_temp[[i]][parts_temp[[i]]==3] <- 1
     # sum(parts_temp==3)
 }
-
-
-# gplot(parts_temp[[1]])
 
 hd_res <- nw_description(parts_temp)
 
